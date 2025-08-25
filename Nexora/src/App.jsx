@@ -9,31 +9,52 @@ import Cart from './Pages/Cart'
 import axios from 'axios'
 import Footer from './Components/Footer'
 import SingleProduct from './Pages/SingleProduct';
+import CategoryProduct from './Pages/CategoryProduct';
+import { useCart } from './context/CartContext'
+import ProtectedRoute from './Components/ProtectedRoute'
 
 const App = () => {
   const [location, setLocation] = useState()
   const [openDropdown, setOpenDropdown] = useState(false)
+  const { cartItem, setCartItem } = useCart()
 
   const getLocation = async () => {
     navigator.geolocation.getCurrentPosition(async pos => {
       const { latitude, longitude } = pos.coords
-      
+      // console.log(latitude, longitude);
+
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
       try {
         const location = await axios.get(url)
         const exactLocation = location.data.address
         setLocation(exactLocation)
         setOpenDropdown(false)
-        // console.log(exactLocation)
-      }
-      catch (error) {
+        // console.log(exactLocation);
+
+      } catch (error) {
         console.log(error);
+
       }
+
     })
   }
+
   useEffect(() => {
     getLocation()
   }, [])
+
+  //Load cart from local storage on initial render
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cartItem')
+    if(storedCart){
+      setCartItem(JSON.parse(storedCart))
+    }
+  }, []);
+
+  //save cart to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cartItem', JSON.stringify(cartItem))
+  }, [cartItem])
 
   return (
     <BrowserRouter>
@@ -41,12 +62,15 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />}></Route>
         <Route path='/products' element={<Products />}></Route>
-         <Route path='/products/:id' element={<SingleProduct />}></Route>
+        <Route path='/products/:id' element={<SingleProduct />}></Route>
+        <Route path='/category/:category' element={<CategoryProduct />}></Route>
         <Route path='/about' element={<About />}></Route>
         <Route path='/contact' element={<Contact />}></Route>
-        <Route path='/cart' element={<Cart loaction={location} getLocation={getLocation}/>}></Route>
+        <Route path='/cart' element={<ProtectedRoute>
+          <Cart location={location} getLocation={getLocation} />
+        </ProtectedRoute>}></Route>
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
   )
 }

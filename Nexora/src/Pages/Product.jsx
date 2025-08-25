@@ -6,6 +6,7 @@ import ProductCard from '../Components/ProductCard'
 import Pagination from '../Components/Pagination'
 import Lottie from 'lottie-react'
 import notfound from '../assets/notfound.json'
+import MobileFilter from '../Components/MobileFilter'
 
 const Product = () => {
   const { data, fetchingAllProducts } = getData()
@@ -14,24 +15,28 @@ const Product = () => {
   const [brand, setBrand] = useState("All")
   const [priceRange, setPriceRange] = useState([0, 5000])
   const [page, setPage] = useState(1)
+  const [openFilter, setOpenFilter] = useState(false)
 
   useEffect(() => {
     fetchingAllProducts()
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }, [])
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value)
     setPage(1)
+    setOpenFilter(false)
   }
 
   const handleBrandChange = (e) => {
     setBrand(e.target.value)
     setPage(1)
+    setOpenFilter(false)
   }
 
   const pageHandler = (selectedPage) => {
     setPage(selectedPage)
+    window.scrollTo(0,0)
   }
 
   const filteredData = data?.filter((item) =>
@@ -45,6 +50,8 @@ const Product = () => {
 
   return (
     <div className='max-w-6xl mx-auto px-4 m-10'>
+      <MobileFilter openFilter={openFilter} setOpenFilter={setOpenFilter} search={search} setSearch={setSearch} brand={brand} setBrand={setBrand} priceRange={priceRange} setPriceRange={setPriceRange}
+        category={category} setCategory={setCategory} handleCategoryChange={handleCategoryChange} handleBrandChange={handleBrandChange} />
       {
         data?.length > 0 ? (
           <>
@@ -54,7 +61,7 @@ const Product = () => {
               {
                 filteredData?.length > 0 ? (
                   <div className='flex flex-col justify-center items-center'>
-                    <div className='grid grid-cols-4 gap-7 mt-10 '>
+                    <div className='grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-7 mt-10 '>
                       {
                         filteredData?.slice(page * 8 - 8, page * 8).map((product, index) => {
                           return <ProductCard key={index} product={product} />
@@ -65,8 +72,8 @@ const Product = () => {
                   </div>
                 ) : (
                   <div className='flex justify-center items-center md:h-[600px] md:w-[900px] mt-10'>
-                    <Lottie animationData = {notfound} classID='w-[500px]'/>
-                  </div> 
+                    <Lottie animationData={notfound} classID='w-[500px]' />
+                  </div>
                 )
               }
 
