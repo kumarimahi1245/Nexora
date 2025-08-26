@@ -46,8 +46,8 @@ const SingleProduct = () => {
               <h1 className='md:text-3xl text-xl font-bold text-gray-800'>{SingleProduct.title}</h1>
               <div className='text-gray-700'>{SingleProduct.brand?.toUpperCase()} / {SingleProduct.category?.toUpperCase()} /
                 {SingleProduct.model}</div>
-                <p className = "text-xl text-red-500 font-bold ">${SingleProduct.price} 
-                  <span className='line-through text-gray-700'> ${originalPrice} </span> 
+                <p className = "text-xl text-red-500 font-bold ">Rs.{SingleProduct.price} 
+                  <span className='line-through text-gray-700'> Rs.{originalPrice} </span> 
                   <span className='bg-red-500 text-white p-2 rounded'>{SingleProduct.discount}%discount </span> </p>
                   <p className='text-gray-600'>{SingleProduct.description}</p>
 
